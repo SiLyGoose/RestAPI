@@ -2,14 +2,13 @@ const fetch = require("node-fetch");
 
 const express = require("express");
 const cors = require("cors");
-const { reset } = require("nodemon");
 const app = express();
 const PORT = 9925;
 
 app.use(express.json()); // turns all requests into json
 app.use(cors());
 
-const cookieList = [];
+// const cookieList = [];
 const guildMemberList = [];
 
 app.listen(PORT, () => console.log(`alive on http://localhost:${PORT}`));
@@ -26,7 +25,7 @@ app.post("/guild-member", async (req, res) => {
 	var { id, username, avatar, access_token, token_type, guild_list } = req.body;
 
     if (guildMemberList.findIndex(member => member.id === id) > -1) {
-	    res.redirect("http://127.0.0.1/projects/JavKing/home.html?id=" + id);
+	    res.redirect("http://zenpai.herokuapp.com/projects/JavKing/home.html?id=" + id);
     }
 
     // var cookie = res.cookie("uid", id, { maxAge: 86400000 });
@@ -86,7 +85,7 @@ app.post("/guild-member", async (req, res) => {
 	});
 
     try {
-        res.redirect("http://127.0.0.1:5500/projects/JavKing/home.html?id=" + id);
+        res.redirect("http://zenpai.herokuapp.com/projects/JavKing/home.html?id=" + id);
     } catch (e) {
         res.status(503);
     }
