@@ -1,9 +1,48 @@
 const fetch = require("node-fetch");
+require("dotenv-flow").config();
 
 const express = require("express");
 const cors = require("cors");
+const { default: mongoose } = require("mongoose");
+const Port = require("./model/Port");
 const app = express();
-const PORT = 9925;
+var http = require('http');
+
+var PORT = process.env.PORT || 9925;
+
+async function getPort() {
+	let data = await Port.findOne({ active: true });
+	if (data) PORT = data.PORT;
+	else await addPort({ PORT: process.env.PORT || 9925 });
+}
+
+async function addPort(object) {
+	try {
+		await Port.deleteMany({ active: true });
+	} catch (ignored) { }
+	let data = Object.assign({ _id: mongoose.Types.ObjectId() }, { PORT: object.PORT, active: true });
+	let { PORT } = await new Port(data).save();
+	PORT = PORT;
+}
+
+const dbOptions = {
+	useNewUrlParser: true,
+	useUnifiedTopology: true,
+	connectTimeoutMS: 20000,
+};
+
+mongoose.connect(process.env.mongoURL, dbOptions);
+mongoose.Promise = global.Promise;
+
+mongoose.connection.on("connected", () => {
+	console.log("Connected!");
+});
+mongoose.connection.on("err", (err) => {
+	console.log(err.stack);
+});
+mongoose.connection.on("disconnected", () => {
+	console.log("Disconnected!");
+});
 
 app.use(express.json()); // turns all requests into json
 app.use(cors());
@@ -11,7 +50,11 @@ app.use(cors());
 // const cookieList = [];
 const guildMemberList = [];
 
-app.listen(PORT, () => console.log(`alive on http://localhost:${PORT}`));
+app.listen(process.env.PORT, async () => {
+	console.log("alive on " + process.env.PORT)
+	// console.log(`alive on http://localhost:${PORT}`);
+	// getPort();
+});
 
 // app.post('/guild_member/:id', (req, res) => {
 //     const { id } = req.params;
@@ -24,15 +67,15 @@ app.post("/guild-member", async (req, res) => {
 	// var { id } = req.params;
 	var { id, username, avatar, access_token, token_type, guild_list } = req.body;
 
-    if (guildMemberList.findIndex(member => member.id === id) > -1) {
-	    res.redirect("http://zenpai.herokuapp.com/projects/JavKing/home.html?id=" + id);
-    }
+	if (guildMemberList.findIndex((member) => member.id === id) > -1) {
+		res.redirect("http://zenpai.herokuapp.com/projects/JavKing/home.html?id=" + id);
+	}
 
-    // var cookie = res.cookie("uid", id, { maxAge: 86400000 });
-    // cookieList.push({
-    //     cookie,
-    //     id
-    // });
+	// var cookie = res.cookie("uid", id, { maxAge: 86400000 });
+	// cookieList.push({
+	//     cookie,
+	//     id
+	// });
 
 	var userGuildList = [],
 		mutualGuilds = [];
@@ -57,9 +100,11 @@ app.post("/guild-member", async (req, res) => {
 			});
 	}
 
-    userGuildList.sort((a, b) => { return a.id - b.id; })
+	userGuildList.sort((a, b) => {
+		return a.id - b.id;
+	});
 
-    guild_list = guild_list.split(",");
+	guild_list = guild_list.split(",");
 	var mutuals = new Set(guild_list);
 	mutualGuilds.push(
 		...userGuildList.filter((guild) => {
@@ -84,11 +129,11 @@ app.post("/guild-member", async (req, res) => {
 		},
 	});
 
-    try {
-        res.redirect("http://zenpai.herokuapp.com/projects/JavKing/home.html?id=" + id);
-    } catch (e) {
-        res.status(503);
-    }
+	try {
+		res.redirect("http://zenpai.herokuapp.com/projects/JavKing/home.html?id=" + id);
+	} catch (e) {
+		res.status(503);
+	}
 	// [
 	//     {
 	//       id: '547956499545325589',
@@ -104,10 +149,11 @@ app.post("/guild-member", async (req, res) => {
 });
 
 app.get("/guild-member", cors(), (req, res) => {
-    // console.log(req.cookies, req.signedCookies);
-})
+	// console.log(req.cookies, req.signedCookies);
+});
 
 app.get("/guild-member/:id", cors(), (req, res) => {
+	getPort();
 	var { id } = req.params;
 	// console.log(id, req.body);
 	let guildMember = guildMemberList.find((member) => member.id === id);
@@ -142,7 +188,7 @@ app.delete("/guild-member/remove/:id", cors(), (req, res) => {
 	} else {
 		guildMemberList.splice(index, 1);
 		res.send({
-            message: "Guild member with id:" + id + " deleted!"
-        });
+			message: "Guild member with id:" + id + " deleted!",
+		});
 	}
 });
