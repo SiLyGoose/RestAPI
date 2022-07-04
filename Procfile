@@ -1,1 +1,1 @@
-npm: node start
+npm: yarn run start
