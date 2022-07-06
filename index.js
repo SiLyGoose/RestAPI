@@ -3,27 +3,10 @@ require("dotenv-flow").config();
 
 const express = require("express");
 const cors = require("cors");
-const { default: mongoose } = require("mongoose");
-const Port = require("./model/Port");
 const app = express();
 var http = require('http');
 
-var PORT = process.env.PORT || 9925;
-
-async function getPort() {
-	let data = await Port.findOne({ active: true });
-	if (data) PORT = data.PORT;
-	else await addPort({ PORT: process.env.PORT || 9925 });
-}
-
-async function addPort(object) {
-	try {
-		await Port.deleteMany({ active: true });
-	} catch (ignored) { }
-	let data = Object.assign({ _id: mongoose.Types.ObjectId() }, { PORT: object.PORT, active: true });
-	let { PORT } = await new Port(data).save();
-	PORT = PORT;
-}
+const PORT = process.env.PORT || 9925;
 
 const dbOptions = {
 	useNewUrlParser: true,
@@ -31,27 +14,15 @@ const dbOptions = {
 	connectTimeoutMS: 20000,
 };
 
-mongoose.connect(process.env.mongoURL, dbOptions);
-mongoose.Promise = global.Promise;
-
-mongoose.connection.on("connected", () => {
-	console.log("Connected!");
-});
-mongoose.connection.on("err", (err) => {
-	console.log(err.stack);
-});
-mongoose.connection.on("disconnected", () => {
-	console.log("Disconnected!");
-});
-
 app.use(express.json()); // turns all requests into json
 app.use(cors());
 
 // const cookieList = [];
 const guildMemberList = [];
+const cookieList = [];
 
-app.listen(process.env.PORT, async () => {
-	console.log("alive on " + process.env.PORT)
+app.listen(PORT, async () => {
+	console.log("alive on " + PORT)
 	// console.log(`alive on http://localhost:${PORT}`);
 	// getPort();
 });
@@ -130,7 +101,8 @@ app.post("/guild-member", async (req, res) => {
 	});
 
 	try {
-		res.redirect("http://zenpai.herokuapp.com/projects/JavKing/home.html?id=" + id);
+		console.log(res.cookie("SID", id, { maxAge: 24 * 60 * 60, httpOnly: true }));
+		// res.redirect("http://zenpai.herokuapp.com/projects/JavKing/home.html?id=" + id);
 	} catch (e) {
 		res.status(503);
 	}
@@ -148,14 +120,16 @@ app.post("/guild-member", async (req, res) => {
 	// ]
 });
 
-app.get("/guild-member", cors(), (req, res) => {
-	// console.log(req.cookies, req.signedCookies);
-});
+// app.get("/guild-member", cors(), (req, res) => {
+// 	console.log(req.cookies, req.signedCookies);
+// });
 
 app.get("/guild-member/:id", cors(), (req, res) => {
-	getPort();
+	// getPort();
 	var { id } = req.params;
-	// console.log(id, req.body);
+	if (!id) {
+		id = 
+	}
 	let guildMember = guildMemberList.find((member) => member.id === id);
 	if (!guildMember) {
 		res.status(503).send({
