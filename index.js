@@ -39,7 +39,7 @@ app.post("/guild-member", async (req, res) => {
 	var { id, username, avatar, access_token, token_type, guild_list } = req.body;
 
 	if (guildMemberList.findIndex((member) => member.id === id) > -1) {
-		res.redirect("http://zenpai.herokuapp.com/projects/JavKing/home.html?id=" + id);
+		res.redirect("http://zenpai.herokuapp.com/projects/JavKing/home.html");
 	}
 
 	// var cookie = res.cookie("uid", id, { maxAge: 86400000 });
@@ -101,7 +101,7 @@ app.post("/guild-member", async (req, res) => {
 	});
 
 	try {
-		res.cookie("SID", id, { maxAge: 2 * 24 * 60 * 60 * 1000, httpOnly: true })
+		res.cookie("SID", id, { maxAge: 2 * 24 * 60 * 60 * 1000 })
 		.redirect("http://zenpai.herokuapp.com/projects/JavKing/home.html");
 
 		cookieList.push({ id, cookie: res.getHeader("set-cookie") });
