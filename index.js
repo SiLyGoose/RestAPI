@@ -128,7 +128,9 @@ app.get("/guild-member/:id", cors(), (req, res) => {
 	// getPort();
 	var { id } = req.params;
 	if (!id) {
-		id = 
+		res.status(401).send({
+			message: "No id provided"
+		});
 	}
 	let guildMember = guildMemberList.find((member) => member.id === id);
 	if (!guildMember) {
