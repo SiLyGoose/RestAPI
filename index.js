@@ -4,15 +4,12 @@ require("dotenv-flow").config();
 const express = require("express");
 const cors = require("cors");
 const app = express();
-var http = require("http");
+
+const dom = require("jsdom");
 
 const PORT = process.env.PORT || 9925;
-
-const dbOptions = {
-	useNewUrlParser: true,
-	useUnifiedTopology: true,
-	connectTimeoutMS: 20000,
-};
+const domain = process.env.PORT ? "zenpai.herokuapp.com" : "127.0.0.1:5500";
+const redirectUrl = "http://" + domain + "/projects/JavKing/home.html";
 
 app.use(express.json()); // turns all requests into json
 app.use(cors());
@@ -23,8 +20,6 @@ const cookieList = [];
 
 app.listen(PORT, async () => {
 	console.log("alive on " + PORT);
-	// console.log(`alive on http://localhost:${PORT}`);
-	// getPort();
 });
 
 // app.post('/guild_member/:id', (req, res) => {
@@ -39,7 +34,7 @@ app.post("/guild-member", async (req, res) => {
 	var { id, username, avatar, access_token, token_type, guild_list } = req.body;
 
 	if (guildMemberList.findIndex((member) => member.id === id) > -1) {
-		res.redirect("http://zenpai.herokuapp.com/projects/JavKing/home.html");
+		res.redirect(redirectUrl);
 	}
 
 	// var cookie = res.cookie("uid", id, { maxAge: 86400000 });
@@ -101,12 +96,22 @@ app.post("/guild-member", async (req, res) => {
 	});
 
 	try {
-		res.redirect("http://zenpai.herokuapp.com/projects/JavKing/home.html")
-		res.cookie("SID", id, { maxAge: 2 * 24 * 60 * 60 * 1000 });
-		
-		cookieList.push({ id, cookie: res.getHeader("set-cookie") });
-
-		console.log(cookieList);
+		fetch(redirectUrl)
+			.then((response) => {
+				return response.text();
+			})
+			.then((html) => {
+				var document = new dom.JSDOM(html);
+				document.cookieJar.setCookie(createCookie("SID", id, 2), redirectUrl, { url: domain }).then((cookie) => {
+					console.log(cookie);
+					cookieList.push({
+						id,
+						cookie: cookie.toString(),
+					});
+					console.log(cookieList);
+					res.redirect(redirectUrl);
+				});
+			});
 		// [
 		//   {
 		//     id: '257214680823627777',
@@ -179,3 +184,10 @@ app.delete("/guild-member/remove/:id", cors(), (req, res) => {
 		});
 	}
 });
+
+function createCookie(name, value, days) {
+	var d = new Date();
+	d.setTime(d.getTime() + days * 24 * 60 * 60 * 1000);
+	var expiresIn = "expires=" + d.toUTCString();
+	return `${name}=${value}; ${expiresIn}`;
+}
