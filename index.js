@@ -101,12 +101,17 @@ app.post("/guild-member", async (req, res) => {
 	});
 
 	try {
-		res.cookie("SID", id, { maxAge: 2 * 24 * 60 * 60 * 1000, httpOnly: true });
+		res.cookie("SID", id, { maxAge: 2 * 24 * 60 * 60 * 1000, httpOnly: true })
+		.redirect("http://zenpai.herokuapp.com/projects/JavKing/home.html");
 
 		cookieList.push({ id, cookie: res.getHeader("set-cookie") });
-		console.log(cookieList)
-
-		res.redirect("http://zenpai.herokuapp.com/projects/JavKing/home.html");
+		console.log(cookieList);
+		// [
+		//   {
+		//     id: '257214680823627777',
+		//     cookie: 'SID=257214680823627777; Max-Age=172800; Path=/; Expires=Fri, 08 Jul 2022 08:00:46 GMT; HttpOnly'
+		//   }
+		// ]
 	} catch (e) {
 		res.status(503);
 	}
@@ -131,7 +136,7 @@ app.post("/guild-member", async (req, res) => {
 app.get("/guild-member/:id", cors(), (req, res) => {
 	// getPort();
 	var { id } = req.params;
-	if (!id) id = cookieList.find((cookie) => cookie.id === id);
+	if (!id) id = cookieList.find((cookie) => cookie.id === id).id;
 	if (!id) {
 		res.status(401).send({
 			message: "No id provided",
