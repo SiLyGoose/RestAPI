@@ -4,7 +4,7 @@ require("dotenv-flow").config();
 const express = require("express");
 const cors = require("cors");
 const app = express();
-var http = require('http');
+var http = require("http");
 
 const PORT = process.env.PORT || 9925;
 
@@ -22,7 +22,7 @@ const guildMemberList = [];
 const cookieList = [];
 
 app.listen(PORT, async () => {
-	console.log("alive on " + PORT)
+	console.log("alive on " + PORT);
 	// console.log(`alive on http://localhost:${PORT}`);
 	// getPort();
 });
@@ -101,8 +101,12 @@ app.post("/guild-member", async (req, res) => {
 	});
 
 	try {
-		console.log(res.cookie("SID", id, { maxAge: 24 * 60 * 60, httpOnly: true }));
-		// res.redirect("http://zenpai.herokuapp.com/projects/JavKing/home.html?id=" + id);
+		res.cookie("SID", id, { maxAge: 2 * 24 * 60 * 60 * 1000, httpOnly: true });
+
+		cookieList.push({ id, cookie: res.getHeader("set-cookie") });
+		console.log(cookieList)
+
+		res.redirect("http://zenpai.herokuapp.com/projects/JavKing/home.html");
 	} catch (e) {
 		res.status(503);
 	}
@@ -127,9 +131,10 @@ app.post("/guild-member", async (req, res) => {
 app.get("/guild-member/:id", cors(), (req, res) => {
 	// getPort();
 	var { id } = req.params;
+	if (!id) id = cookieList.find((cookie) => cookie.id === id);
 	if (!id) {
 		res.status(401).send({
-			message: "No id provided"
+			message: "No id provided",
 		});
 	}
 	let guildMember = guildMemberList.find((member) => member.id === id);
