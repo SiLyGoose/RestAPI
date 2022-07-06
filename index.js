@@ -5,7 +5,7 @@ const express = require("express");
 const cors = require("cors");
 const app = express();
 
-const dom = require("jsdom");
+// const dom = require("jsdom");
 
 const PORT = process.env.PORT || 9925;
 const domain = process.env.PORT ? "zenpai.herokuapp.com" : "127.0.0.1:5500";
@@ -96,22 +96,31 @@ app.post("/guild-member", async (req, res) => {
 	});
 
 	try {
-		fetch(redirectUrl)
-			.then((response) => {
-				return response.text();
-			})
-			.then((html) => {
-				var document = new dom.JSDOM(html);
-				document.cookieJar.setCookie(createCookie("SID", id, 2), redirectUrl, { url: domain }).then((cookie) => {
-					console.log(cookie);
-					cookieList.push({
-						id,
-						cookie: cookie.toString(),
-					});
-					console.log(cookieList);
-					res.redirect(redirectUrl);
-				});
-			});
+		// fetch(redirectUrl)
+		// 	.then((response) => {
+		// 		return response.text();
+		// 	})
+		// 	.then((html) => {
+		// 		var document = new dom.JSDOM(html);
+		// 		if (cookieList.find((cookie) => cookie.id === id)) {
+		// 			res.redirect(redirectUrl);
+		// 		} else {
+		// 			document.cookieJar.setCookie(createCookie("SID", id, 2), redirectUrl, { url: domain }).then((cookie) => {
+		// 				console.log(cookie);
+		// 				cookieList.push({
+		// 					id,
+		// 					cookie: cookie.toString(),
+		// 				});
+		// 				console.log(cookieList);
+		// 				res.redirect(redirectUrl);
+		// 			});
+		// 		}
+		// 	});
+
+		// res.cookie("SID", id, { maxAge: 2 * 24 * 60 * 60 * 1000 });
+		// console.log(res.getHeader("Set-Cookie"), res.getHeaders())
+		res.redirect(redirectUrl);
+
 		// [
 		//   {
 		//     id: '257214680823627777',
