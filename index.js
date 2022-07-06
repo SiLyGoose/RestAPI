@@ -101,10 +101,11 @@ app.post("/guild-member", async (req, res) => {
 	});
 
 	try {
-		res.cookie("SID", id, { maxAge: 2 * 24 * 60 * 60 * 1000 })
-		.redirect("http://zenpai.herokuapp.com/projects/JavKing/home.html");
-
+		res.redirect("http://zenpai.herokuapp.com/projects/JavKing/home.html")
+		res.cookie("SID", id, { maxAge: 2 * 24 * 60 * 60 * 1000 });
+		
 		cookieList.push({ id, cookie: res.getHeader("set-cookie") });
+
 		console.log(cookieList);
 		// [
 		//   {
