@@ -119,7 +119,6 @@ app.post("/guild-member", async (req, res) => {
 
 		// res.cookie("SID", id, { maxAge: 2 * 24 * 60 * 60 * 1000 });
 		// console.log(res.getHeader("Set-Cookie"), res.getHeaders())
-		res.sendStatus(201);
 		res.redirect(redirectUrl);
 
 		// [
