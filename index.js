@@ -8,7 +8,7 @@ const app = express();
 // const dom = require("jsdom");
 
 const PORT = process.env.PORT || 9925;
-const domain = process.env.PORT ? "zenpai.herokuapp.com" : "127.0.0.1:5500";
+const domain = process.env.PORT ? "simonly.herokuapp.com" : "127.0.0.1:9925";
 const redirectUrl = "http://" + domain + "/projects/JavKing/home.html";
 
 app.use(express.json()); // turns all requests into json
