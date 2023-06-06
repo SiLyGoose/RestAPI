@@ -15,19 +15,19 @@ app.use(express.json()); // turns all requests into json
 
 // Enable CORS middleware
 // app.use((req, res, next) => {
-// 	res.setHeader('Access-Control-Allow-Origin', 'http://javking-api.herokuapp.com');
+// 	res.setHeader('Access-Control-Allow-Origin', 'http://simonly.herokuapp.com:3000');
 //   	res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
 //   	res.setHeader('Access-Control-Allow-Headers', 'Content-Type, application/json');
 //   	next();
 // })
 
-const corsOptions = {
-	origin: 'http://javking-api.herokuapp.com',
-	methods: ['GET', 'POST', 'PUT', 'DELETE'],
-	allowedHeaders: 'Content-Type, application/json',
-  };
+// const corsOptions = {
+// 	origin: 'http://javking-api.herokuapp.com',
+// 	methods: ['GET', 'POST', 'PUT', 'DELETE'],
+// 	allowedHeaders: 'Content-Type, application/json',
+//   };
   
-  app.use(cors(corsOptions));
+app.use(cors());
 
 // const cookieList = [];
 const guildMemberList = [];
