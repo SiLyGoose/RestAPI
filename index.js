@@ -15,6 +15,7 @@ app.use(express.json()); // turns all requests into json
 app.use(cors());
 
 // const cookieList = [];
+const guildMemberList = [];
 const cookieList = [];
 
 app.listen(PORT, async () => {
