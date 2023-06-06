@@ -15,7 +15,6 @@ app.use(express.json()); // turns all requests into json
 app.use(cors());
 
 // const cookieList = [];
-const guildMemberList = [];
 const cookieList = [];
 
 app.listen(PORT, async () => {
@@ -167,7 +166,7 @@ app.get("/guild-member/:id", cors(), (req, res) => {
 	}
 });
 
-app.post("/voice-member", cors(), (req, res) => {
+app.post("/voice-update", cors(), (req, res) => {
 	var { id, voiceId, voiceName, botVoiceId, botVoiceName, botJoinable } = req.body;
 
 	let guildMember = guildMemberList.find((member) => member.id === id);
