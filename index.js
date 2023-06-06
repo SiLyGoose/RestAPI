@@ -12,15 +12,22 @@ const domain = process.env.PORT ? "simonly.herokuapp.com" : "127.0.0.1:9925";
 const redirectUrl = "http://" + domain + "/projects/JavKing/home.html";
 
 app.use(express.json()); // turns all requests into json
-app.use(cors());
 
 // Enable CORS middleware
-app.use((req, res, next) => {
-	res.setHeader('Access-Control-Allow-Origin', 'http://javking-api.herokuapp.com');
-  	res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
-  	res.setHeader('Access-Control-Allow-Headers', 'Content-Type, application/json');
-  	next();
-})
+// app.use((req, res, next) => {
+// 	res.setHeader('Access-Control-Allow-Origin', 'http://javking-api.herokuapp.com');
+//   	res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
+//   	res.setHeader('Access-Control-Allow-Headers', 'Content-Type, application/json');
+//   	next();
+// })
+
+const corsOptions = {
+	origin: 'http://javking-api.herokuapp.com',
+	methods: ['GET', 'POST', 'PUT', 'DELETE'],
+	allowedHeaders: 'Content-Type, application/json',
+  };
+  
+  app.use(cors(corsOptions));
 
 // const cookieList = [];
 const guildMemberList = [];
