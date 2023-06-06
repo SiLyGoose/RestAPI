@@ -31,7 +31,7 @@ app.listen(PORT, async () => {
 app.post("/guild-member", async (req, res) => {
 	// requires "/:id" after guild_member in path
 	// var { id } = req.params;
-	var { id, username, avatar, access_token, token_type, guild_list } = req.body;
+	var { id, username, avatar, accessToken, tokenType, guildList } = req.body;
 
 	if (guildMemberList.findIndex((member) => member.id === id) > -1) {
 		res.redirect(redirectUrl);
@@ -50,7 +50,7 @@ app.post("/guild-member", async (req, res) => {
 		await fetch("https://discord.com/api/v10/users/@me/guilds", {
 			method: "GET",
 			headers: new fetch.Headers({
-				Authorization: `${token_type} ${access_token}`,
+				Authorization: `${tokenType} ${accessToken}`,
 				"Content-Type": "application/x-www-form-encoded",
 			}),
 		})
@@ -70,8 +70,8 @@ app.post("/guild-member", async (req, res) => {
 		return a.id - b.id;
 	});
 
-	guild_list = guild_list.split(",");
-	var mutuals = new Set(guild_list);
+	guildList = guildList.split(",");
+	var mutuals = new Set(guildList);
 	mutualGuilds.push(
 		...userGuildList.filter((guild) => {
 			return mutuals.has(guild.id);
@@ -88,10 +88,10 @@ app.post("/guild-member", async (req, res) => {
 		data: {
 			username,
 			avatar,
-			access_token,
-			token_type,
-			user_guild_list: userGuildList,
-			mutual_guilds: mutualGuilds,
+			accessToken,
+			tokenType,
+			userGuildList,
+			mutualGuilds,
 		},
 	});
 
@@ -157,6 +157,34 @@ app.get("/guild-member/:id", cors(), (req, res) => {
 			message: "No id provided",
 		});
 	}
+	let guildMember = guildMemberList.find((member) => member.id === id);
+	if (!guildMember) {
+		res.status(503).send({
+			message: "No guild member found!",
+		});
+	} else {
+		res.send(guildMember);
+	}
+});
+
+app.post("/voice-member", cors(), (req, res) => {
+	var { id, voiceId, voiceName, botVoiceId, botVoiceName, botJoinable } = req.body;
+
+	let guildMember = guildMemberList.find((member) => member.id === id);
+	if (!guildMember) {
+		res.status(503).send({
+			message: "No guild member found!",
+		});
+	}
+
+	guildMember.data.voice = { userChannel: { voiceId, voiceName, botJoinable }, botChannel: { botVoiceId, botVoiceName, botJoinable } };
+
+	res.status(200);
+});
+
+app.get("/voice-member/:id?/:voiceId?/:botVoiceId?", cors(), (req, res) => {
+	var { id, voiceId, botVoiceId } = req.params;
+
 	let guildMember = guildMemberList.find((member) => member.id === id);
 	if (!guildMember) {
 		res.status(503).send({
