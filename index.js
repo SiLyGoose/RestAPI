@@ -5,8 +5,6 @@ const express = require("express");
 const cors = require("cors");
 const app = express();
 
-// const dom = require("jsdom");
-
 const PORT = process.env.PORT || 9925;
 const domain = process.env.PORT ? "simonly.herokuapp.com" : "127.0.0.1:9925";
 const redirectUrl = "http://" + domain + "/projects/JavKing/home.html";
@@ -21,21 +19,11 @@ app.use((req, res, next) => {
 	next();
 });
 
-// app.use(cors());
-
-// const cookieList = [];
 const guildMemberList = [];
-const cookieList = [];
 
 app.listen(PORT, () => {
 	console.log("alive on " + PORT);
 });
-
-// app.post('/guild_member/:id', (req, res) => {
-//     const { id } = req.params;
-//     const { logo } = req.body;
-//     res.status(200);
-// });
 
 app.post("/guild-member", async (req, res) => {
 	// requires "/:id" after guild_member in path
@@ -45,12 +33,6 @@ app.post("/guild-member", async (req, res) => {
 	if (guildMemberList.findIndex((member) => member.id === id) > -1) {
 		res.redirect(redirectUrl);
 	}
-
-	// var cookie = res.cookie("uid", id, { maxAge: 86400000 });
-	// cookieList.push({
-	//     cookie,
-	//     id
-	// });
 
 	var userGuildList = [],
 		mutualGuilds = [];
@@ -105,37 +87,7 @@ app.post("/guild-member", async (req, res) => {
 	});
 
 	try {
-		// fetch(redirectUrl)
-		// 	.then((response) => {
-		// 		return response.text();
-		// 	})
-		// 	.then((html) => {
-		// 		var document = new dom.JSDOM(html);
-		// 		if (cookieList.find((cookie) => cookie.id === id)) {
-		// 			res.redirect(redirectUrl);
-		// 		} else {
-		// 			document.cookieJar.setCookie(createCookie("SID", id, 2), redirectUrl, { url: domain }).then((cookie) => {
-		// 				console.log(cookie);
-		// 				cookieList.push({
-		// 					id,
-		// 					cookie: cookie.toString(),
-		// 				});
-		// 				console.log(cookieList);
-		// 				res.redirect(redirectUrl);
-		// 			});
-		// 		}
-		// 	});
-
-		// res.cookie("SID", id, { maxAge: 2 * 24 * 60 * 60 * 1000 });
-		// console.log(res.getHeader("Set-Cookie"), res.getHeaders())
 		res.redirect(redirectUrl);
-
-		// [
-		//   {
-		//     id: '257214680823627777',
-		//     cookie: 'SID=257214680823627777; Max-Age=172800; Path=/; Expires=Fri, 08 Jul 2022 08:00:46 GMT; HttpOnly'
-		//   }
-		// ]
 	} catch (e) {
 		res.status(503);
 	}
@@ -152,10 +104,6 @@ app.post("/guild-member", async (req, res) => {
 	//     }
 	// ]
 });
-
-// app.get("/guild-member", cors(), (req, res) => {
-// 	console.log(req.cookies, req.signedCookies);
-// });
 
 app.get("/guild-member/:id", cors(), (req, res) => {
 	// getPort();
@@ -184,11 +132,11 @@ app.post("/voice-update", cors(), (req, res) => {
 	voiceId = voiceId || undefined;
 	voiceName = voiceName || undefined;
 
-	botJoinable = typeof botJoinable === 'boolean' ? botJoinable : false;
-	botSpeakable = typeof botJoinable === 'boolean' ? botJoinable : false;
+	botJoinable = typeof botJoinable === "boolean" ? botJoinable : false;
+	botSpeakable = typeof botJoinable === "boolean" ? botJoinable : false;
 
 	botVoiceId = botVoiceId || undefined;
-  	botVoiceName = botVoiceName || undefined;
+	botVoiceName = botVoiceName || undefined;
 
 	let guildMember = guildMemberList.find((member) => member.id === id);
 	if (!guildMember && !isBot(id)) {
@@ -200,13 +148,8 @@ app.post("/voice-update", cors(), (req, res) => {
 	if (voiceId || voiceName) guildMember.data.voice = { userChannel: { voiceId, voiceName, botJoinable } };
 	else guildMember.data.voice.userChannel = null;
 
-	if (botVoiceId || botVoiceName) guildMember.data.voice = { botChannel: { botVoiceId, botVoiceName, botJoinable } };
+	if (botVoiceId || botVoiceName) guildMember.data.voice = { botChannel: { botVoiceId, botVoiceName, botSpeakable } };
 	else guildMember.data.voice.botChannel = null;
-
-	// guildMember.data.voice = {
-	// 	userChannel: { voiceId, voiceName, botJoinable },
-	// 	botChannel: { botVoiceId, botVoiceName, botJoinable }
-	// };
 
 	res.send(guildMember);
 });
@@ -250,13 +193,6 @@ app.delete("/guild-member/remove/:id", cors(), (req, res) => {
 		});
 	}
 });
-
-function createCookie(name, value, days) {
-	var d = new Date();
-	d.setTime(d.getTime() + days * 24 * 60 * 60 * 1000);
-	var expiresIn = "expires=" + d.toUTCString();
-	return `${name}=${value}; ${expiresIn}`;
-}
 
 function isBot(id = 0) {
 	return id == "694655522237972510";
