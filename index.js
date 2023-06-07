@@ -177,14 +177,18 @@ app.get("/guild-member/:id", cors(), (req, res) => {
 });
 
 app.post("/voice-update", cors(), (req, res) => {
-	var { id, voiceId, voiceName, botVoiceId, botVoiceName, botJoinable } = req.body;
+	var { id, voiceId, voiceName, botJoinable, botVoiceId, botVoiceName, botSpeakable } = req.body;
 
 	id = id || undefined;
+	
 	voiceId = voiceId || undefined;
 	voiceName = voiceName || undefined;
-	botVoiceId = botVoiceId || undefined; // Default value is an empty string
-  	botVoiceName = botVoiceName || undefined; // Default value is an empty string
-  	botJoinable = typeof botJoinable === 'boolean' ? botJoinable : false;
+
+	botJoinable = typeof botJoinable === 'boolean' ? botJoinable : false;
+	botSpeakable = typeof botJoinable === 'boolean' ? botJoinable : false;
+
+	botVoiceId = botVoiceId || undefined;
+  	botVoiceName = botVoiceName || undefined;
 
 	let guildMember = guildMemberList.find((member) => member.id === id);
 	if (!guildMember) {
@@ -194,7 +198,10 @@ app.post("/voice-update", cors(), (req, res) => {
 	}
 
 	if (voiceId || voiceName) guildMember.data.voice = { userChannel: { voiceId, voiceName, botJoinable } };
+	else guildMember.data.voice.userChannel = { };
+
 	if (botVoiceId || botVoiceName) guildMember.data.voice = { botChannel: { botVoiceId, botVoiceName, botJoinable } };
+	else guildMember.data.voice.botChannel = { };
 
 	// guildMember.data.voice = {
 	// 	userChannel: { voiceId, voiceName, botJoinable },
