@@ -15,12 +15,12 @@ app.use(express.json()); // turns all requests into json
 
 // Enable CORS middleware
 app.use((req, res, next) => {
-	res.setHeader('Access-Control-Allow-Origin', '*');
-  	res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
-  	res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
-  	next();
+	res.setHeader("Access-Control-Allow-Origin", "*");
+	res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
+	res.setHeader("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+	next();
 });
-  
+
 // app.use(cors());
 
 // const cookieList = [];
@@ -179,6 +179,13 @@ app.get("/guild-member/:id", cors(), (req, res) => {
 app.post("/voice-update", cors(), (req, res) => {
 	var { id, voiceId, voiceName, botVoiceId, botVoiceName, botJoinable } = req.body;
 
+	id = id || undefined;
+	voiceId = voiceId || undefined;
+	voiceName = voiceName || undefined;
+	botVoiceId = botVoiceId || undefined; // Default value is an empty string
+  	botVoiceName = botVoiceName || undefined; // Default value is an empty string
+  	botJoinable = typeof botJoinable === 'boolean' ? botJoinable : false;
+
 	let guildMember = guildMemberList.find((member) => member.id === id);
 	if (!guildMember) {
 		res.status(503).send({
@@ -186,7 +193,13 @@ app.post("/voice-update", cors(), (req, res) => {
 		});
 	}
 
-	guildMember.data.voice = { userChannel: { voiceId, voiceName, botJoinable }, botChannel: { botVoiceId, botVoiceName, botJoinable } };
+	if (voiceId || voiceName) guildMember.data.voice = { userChannel: { voiceId, voiceName, botJoinable } };
+	if (botVoiceId || botVoiceName) guildMember.data.voice = { botChannel: { botVoiceId, botVoiceName, botJoinable } };
+
+	// guildMember.data.voice = {
+	// 	userChannel: { voiceId, voiceName, botJoinable },
+	// 	botChannel: { botVoiceId, botVoiceName, botJoinable }
+	// };
 
 	res.sendStatus(200);
 });
