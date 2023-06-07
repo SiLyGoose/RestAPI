@@ -201,7 +201,7 @@ app.post("/voice-update", cors(), (req, res) => {
 	// 	botChannel: { botVoiceId, botVoiceName, botJoinable }
 	// };
 
-	res.sendStatus(200);
+	res.send(guildMember);
 });
 
 app.get("/voice-member/:id?/:voiceId?/:botVoiceId?", cors(), (req, res) => {
