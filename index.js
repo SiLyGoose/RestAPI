@@ -159,7 +159,7 @@ app.post("/voice-update", cors(), (req, res) => {
 		};
 	else guildMember.data.voice.botChannel = null;
 
-	res.send(guildMember);
+	res.send(redacted(guildMember));
 });
 
 app.get("/voice-member/:id?/:voiceId?/:botVoiceId?", cors(), (req, res) => {
@@ -204,4 +204,8 @@ app.delete("/guild-member/remove/:id", cors(), (req, res) => {
 
 function isBot(id = 0) {
 	return id == "694655522237972510";
+}
+
+function redacted({ id, data: { username, mutualGuilds, voice: { userChannel, botChannel } } }) {
+	return { id, data: { username, mutualGuilds, voice: { userChannel, botChannel } } };
 }
