@@ -145,10 +145,18 @@ app.post("/voice-update", cors(), (req, res) => {
 		});
 	}
 
-	if (voiceId || voiceName) guildMember.data.voice = { userChannel: { voiceId, voiceName, botJoinable } };
+	if (voiceId || voiceName)
+		guildMember.data.voice = {
+			...guildMember.data.voice,
+			userChannel: { voiceId, voiceName, botJoinable },
+		};
 	else guildMember.data.voice.userChannel = null;
 
-	if (botVoiceId || botVoiceName) guildMember.data.voice = { botChannel: { botVoiceId, botVoiceName, botSpeakable } };
+	if (botVoiceId || botVoiceName)
+		guildMember.data.voice = {
+			...guildMember.data.voice,
+			botChannel: { botVoiceId, botVoiceName, botSpeakable },
+		};
 	else guildMember.data.voice.botChannel = null;
 
 	res.send(guildMember);
