@@ -191,7 +191,7 @@ app.post("/voice-update", cors(), (req, res) => {
   	botVoiceName = botVoiceName || undefined;
 
 	let guildMember = guildMemberList.find((member) => member.id === id);
-	if (!guildMember) {
+	if (!guildMember && !isBot(id)) {
 		res.status(503).send({
 			message: "No guild member found!",
 		});
@@ -215,7 +215,7 @@ app.get("/voice-member/:id?/:voiceId?/:botVoiceId?", cors(), (req, res) => {
 	var { id, voiceId, botVoiceId } = req.params;
 
 	let guildMember = guildMemberList.find((member) => member.id === id);
-	if (!guildMember) {
+	if (!guildMember && !isBot(id)) {
 		res.status(503).send({
 			message: "No guild member found!",
 		});
@@ -256,4 +256,8 @@ function createCookie(name, value, days) {
 	d.setTime(d.getTime() + days * 24 * 60 * 60 * 1000);
 	var expiresIn = "expires=" + d.toUTCString();
 	return `${name}=${value}; ${expiresIn}`;
+}
+
+function isBot(id = 0) {
+	return id == "694655522237972510";
 }
