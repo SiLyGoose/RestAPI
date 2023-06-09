@@ -176,7 +176,7 @@ app.get("/voice-member/:id?/:voiceId?/:botVoiceId?", cors(), (req, res) => {
 	}
 });
 
-app.get("/create-room", cors(), (req, res) => {
+app.get("/create-room/:roomId", cors(), (req, res) => {
 	const { roomId } = req.params;
 
 	const guildRoom = getRoomById(roomId);
