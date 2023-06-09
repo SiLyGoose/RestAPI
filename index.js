@@ -62,8 +62,8 @@ app.post("/guild-member", async (req, res) => {
 		return a.id - b.id;
 	});
 
-	guildList = guildList.split(",");
-	var mutuals = new Set(guildList);
+	var splitGuildList = guildList.split(",");
+	var mutuals = new Set(splitGuildList);
 	mutualGuilds.push(
 		...userGuildList.filter((guild) => {
 			return mutuals.has(guild.id);
