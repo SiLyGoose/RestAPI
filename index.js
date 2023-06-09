@@ -242,7 +242,7 @@ function redacted({ id, data: { username, mutualGuilds, voice: { userChannel, bo
 
 function getRoomById(id) {
 	for (let i = 0; i < guildRooms.length; i++) {
-		if (guildRooms[i].roomId == id) return guildRooms[i];
+		if (guildRooms[i].guildId == id) return guildRooms[i];
 	}
 	return null;
 }
