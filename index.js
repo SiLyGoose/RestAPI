@@ -179,11 +179,12 @@ app.get("/voice-member/:id?/:voiceId?/:botVoiceId?", cors(), (req, res) => {
 app.get("/room/:roomId", cors(), (req, res) => {
 	const { roomId } = req.params;
 
+	console.log(guildRooms, roomId)
 	const guildRoom = getRoomById(roomId);
 
 	if (!guildRoom) return res.status(404).json({message:'Room not found.'});
 
-	res.json(guildRoom);
+	res.status(200).json(guildRoom);
 });
 
 app.post("/create-room", cors(), (req, res) => {
