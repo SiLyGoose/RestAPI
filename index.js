@@ -179,7 +179,6 @@ app.get("/voice-member/:id?/:voiceId?/:botVoiceId?", cors(), (req, res) => {
 app.get("/room/:roomId", cors(), (req, res) => {
 	const { roomId } = req.params;
 
-	console.log(guildRooms, roomId)
 	const guildRoom = getRoomById(roomId);
 
 	if (!guildRoom) return res.status(404).json({message:'Room not found.'});
@@ -243,7 +242,7 @@ function redacted({ id, data: { username, mutualGuilds, voice: { userChannel, bo
 
 function getRoomById(id) {
 	for (let i = 0; i < guildRooms.length; i++) {
-		if (guildRooms[i].roomId === id) return guildRooms[i];
+		if (guildRooms[i].roomId == id) return guildRooms[i];
 	}
 	return null;
 }
