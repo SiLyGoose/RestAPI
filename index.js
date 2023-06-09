@@ -176,7 +176,7 @@ app.get("/voice-member/:id?/:voiceId?/:botVoiceId?", cors(), (req, res) => {
 	}
 });
 
-app.post("/player-update", cors(), (req, res) => {
+app.post("/create-room", cors(), (req, res) => {
 	const { guildId, position, paused, repeat, track } = req.body;
 
 	const guildRoom = {
