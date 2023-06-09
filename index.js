@@ -126,7 +126,7 @@ app.get("/guild-member/:id", cors(), (req, res) => {
 });
 
 app.post("/voice-update", cors(), (req, res) => {
-	const { id, voiceId, voiceName, botJoinable, botVoiceId, botVoiceName, botSpeakable } = req.body;
+	var { id, voiceId, voiceName, botJoinable, botVoiceId, botVoiceName, botSpeakable } = req.body;
 
 	id = id || undefined;
 
