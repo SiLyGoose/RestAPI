@@ -176,11 +176,21 @@ app.get("/voice-member/:id?/:voiceId?/:botVoiceId?", cors(), (req, res) => {
 	}
 });
 
+app.get("/create-room", cors(), (req, res) => {
+	const { roomId } = req.params;
+
+	const guildRoom = getRoomById(roomId);
+
+	if (!guildRoom) return res.status(404).json({message:'Room not found.'});
+
+	res.json(guildRoom);
+});
+
 app.post("/create-room", cors(), (req, res) => {
 	const { guildId, position, paused, repeat, track } = req.body;
 
 	const guildRoom = {
-		id: guildRooms.length + 1,
+		roomId: guildRooms.length + 1,
 		guildId,
 		data: {
 			position,
@@ -228,4 +238,11 @@ function isBot(id = 0) {
 
 function redacted({ id, data: { username, mutualGuilds, voice: { userChannel, botChannel } } }) {
 	return { id, data: { username, mutualGuilds, voice: { userChannel, botChannel } } };
+}
+
+function getRoomById(id) {
+	for (let i = 0; i < guildRooms.length; i++) {
+		if (guildRooms[i].roomId === id) return guildRooms[i];
+	}
+	return null;
 }
