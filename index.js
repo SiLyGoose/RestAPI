@@ -108,7 +108,7 @@ app.post("/guild-member", async (req, res) => {
 
 app.get("/guild-member/:id", cors(), (req, res) => {
 	// getPort();
-	const { id } = req.params;
+	var { id } = req.params;
 	if (!id) id = cookieList.find((cookie) => cookie.id === id).id;
 	if (!id) {
 		res.status(401).send({
