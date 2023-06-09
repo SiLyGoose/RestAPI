@@ -20,6 +20,7 @@ app.use((req, res, next) => {
 });
 
 const guildMemberList = [];
+const guildRooms = [];
 
 app.listen(PORT, () => {
 	console.log("alive on " + PORT);
@@ -28,7 +29,7 @@ app.listen(PORT, () => {
 app.post("/guild-member", async (req, res) => {
 	// requires "/:id" after guild_member in path
 	// var { id } = req.params;
-	var { id, username, avatar, accessToken, tokenType, guildList } = req.body;
+	const { id, username, avatar, accessToken, tokenType, guildList } = req.body;
 
 	if (guildMemberList.findIndex((member) => member.id === id) > -1) {
 		res.redirect(redirectUrl);
@@ -107,7 +108,7 @@ app.post("/guild-member", async (req, res) => {
 
 app.get("/guild-member/:id", cors(), (req, res) => {
 	// getPort();
-	var { id } = req.params;
+	const { id } = req.params;
 	if (!id) id = cookieList.find((cookie) => cookie.id === id).id;
 	if (!id) {
 		res.status(401).send({
@@ -125,7 +126,7 @@ app.get("/guild-member/:id", cors(), (req, res) => {
 });
 
 app.post("/voice-update", cors(), (req, res) => {
-	var { id, voiceId, voiceName, botJoinable, botVoiceId, botVoiceName, botSpeakable } = req.body;
+	const { id, voiceId, voiceName, botJoinable, botVoiceId, botVoiceName, botSpeakable } = req.body;
 
 	id = id || undefined;
 
@@ -163,7 +164,7 @@ app.post("/voice-update", cors(), (req, res) => {
 });
 
 app.get("/voice-member/:id?/:voiceId?/:botVoiceId?", cors(), (req, res) => {
-	var { id, voiceId, botVoiceId } = req.params;
+	const { id, voiceId, botVoiceId } = req.params;
 
 	let guildMember = guildMemberList.find((member) => member.id === id);
 	if (!guildMember && !isBot(id)) {
@@ -175,8 +176,27 @@ app.get("/voice-member/:id?/:voiceId?/:botVoiceId?", cors(), (req, res) => {
 	}
 });
 
+app.post("/player-update", cors(), (req, res) => {
+	const { guildId, position, paused, repeat, track } = req.body;
+
+	const guildRoom = {
+		id: guildRooms.length + 1,
+		guildId,
+		data: {
+			position,
+			paused,
+			repeat,
+			track
+		}
+	};
+
+	guildRooms.push(guildRoom);
+
+	res.status(201).json(guildRoom);
+})
+
 app.get("/guild-member/:id/guilds", cors(), (req, res) => {
-	var { id } = req.params;
+	const { id } = req.params;
 	let guildMember = guildMemberList.find((member) => member.id === id);
 	if (!guildMember) {
 		res.status(503).send({
@@ -188,7 +208,7 @@ app.get("/guild-member/:id/guilds", cors(), (req, res) => {
 });
 
 app.delete("/guild-member/remove/:id", cors(), (req, res) => {
-	var { id } = req.params;
+	const { id } = req.params;
 	let index = guildMemberList.findIndex((member) => member.id === id);
 	if (index === -1) {
 		res.status(503).send({
