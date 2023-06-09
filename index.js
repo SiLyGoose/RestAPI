@@ -176,10 +176,10 @@ app.get("/voice-member/:id?/:voiceId?/:botVoiceId?", cors(), (req, res) => {
 	}
 });
 
-app.get("/room/:roomId", cors(), (req, res) => {
-	const { roomId } = req.params;
+app.get("/room/:guildId", cors(), (req, res) => {
+	const { guildId } = req.params;
 
-	const guildRoom = getRoomById(roomId);
+	const guildRoom = getRoomById(guildId);
 
 	if (!guildRoom) return res.status(404).json({message:'Room not found.'});
 
@@ -193,10 +193,10 @@ app.post("/create-room", cors(), (req, res) => {
 		roomId: guildRooms.length + 1,
 		guildId,
 		data: {
-			position,
-			paused,
-			repeat,
-			track
+			position: position || null,
+			paused: paused || null,
+			repeat: repeat || null,
+			track: track || null
 		}
 	};
 
